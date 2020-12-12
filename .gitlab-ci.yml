@@ -1,0 +1,57 @@
+image: openjdk:latest
+
+variables:
+  # if you should define env variables
+  ENVIRONMENT: DEFAULT
+
+cache:
+  # if you should shared file across jobs
+
+stages:
+  - unit_test
+  - integration_test
+  - build
+  - deploy
+
+unittest:
+    stage: unit_test
+    script:
+        - bash gradlew test
+
+integrate_test:
+    stage: integration_test
+    script:
+        - bash gradlew test
+    services:
+    variables:
+        ENDPOINT_URL: http://localhost
+
+build:
+    stage: build
+    script:
+        - bash gradlew jar
+    artifacts:
+        paths:
+            - build/libs/test-project.jar
+
+deploy_dev:
+    stage: deploy
+    script:
+        # you should write any code to deploy develop environment.
+        - echo dummy script
+    only:
+        - develop
+    environment:
+        name: develop
+
+deploy_prd:
+    stage: deploy
+    script:
+        # you should write any code to deploy production environment.
+        - echo dummy script
+    only:
+        - master
+    when: manual
+    environment:
+        name: production
+
